@@ -1,4 +1,3 @@
-
 // components/ItemModal.jsx
 import React, { useState } from 'react';
 import './Modals.css';
@@ -7,46 +6,73 @@ const ItemModal = ({ item, onClose }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = () => {
-    if (currentIndex + 1 < item.images.length) {
-      setCurrentIndex(currentIndex + 1);
-    }
+    setCurrentIndex((prevIndex) =>
+      prevIndex + 1 < item.images.length ? prevIndex + 1 : 0
+    );
   };
 
   const handlePrev = () => {
-    if (currentIndex - 1 >= 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
+    setCurrentIndex((prevIndex) =>
+      prevIndex - 1 >= 0 ? prevIndex - 1 : item.images.length - 1
+    );
   };
 
   return (
-    <div className="modal-container">
-      <div className="modal-box">
-        <h2 className="modal-title">{item.name}</h2>
-        <p className="modal-type">Type: {item.type}</p>
-        <p className="modal-description">{item.description}</p>
+    <div className="modal-backdrop">
+      <div className="modal-container">
+        <div className="modal-box enhanced">
+          <button className="modal-close-button" onClick={onClose}>
+            &times;
+          </button>
 
-        {item.images && item.images.length > 0 ? (
-          <div className="carousel-wrapper">
-            <div className="carousel-row">
-              <img
-                src={item.images[currentIndex]}
-                alt={`carousel-${currentIndex}`}
-                className="carousel-image"
-              />
-            </div>
-            {item.images.length > 1 && (
-              <div className="carousel-controls">
-                <button onClick={handlePrev} className="carousel-button">&#8592; Prev</button>
-                <button onClick={handleNext} className="carousel-button">Next &#8594;</button>
+          <h2 className="modal-title">{item.name}</h2>
+          <p className="modal-type">
+            <strong>Type:</strong> {item.type}
+          </p>
+          <p className="modal-description">{item.description}</p>
+
+          {item.images?.length > 0 ? (
+            <div className="carousel-slider-wrapper">
+              <button onClick={handlePrev} className="slider-nav slider-left">
+                &#8592;
+              </button>
+
+              <div className="carousel-track">
+                {item.images.map((img, index) => (
+                  <div
+                    key={index}
+                    className={`carousel-slide ${
+                      index === currentIndex ? 'active' : 'inactive'
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt={`slide-${index}`}
+                      className="carousel-slide-img"
+                    />
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
-        ) : (
-          <p>No images available.</p>
-        )}
 
-        <button className="modal-button" onClick={() => alert('Enquiry sent!')}>Enquire</button>
-        <button className="modal-close" onClick={onClose}>Close</button>
+              <button onClick={handleNext} className="slider-nav slider-right">
+                &#8594;
+              </button>
+
+              <div className="carousel-counter">
+                {currentIndex + 1} / {item.images.length}
+              </div>
+            </div>
+          ) : (
+            <p>No images available.</p>
+          )}
+
+          <button
+            className="modal-button"
+            onClick={() => alert('Enquiry sent!')}
+          >
+            Enquire
+          </button>
+        </div>
       </div>
     </div>
   );
